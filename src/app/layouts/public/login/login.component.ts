@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -9,6 +10,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class LoginComponent implements OnInit {
   fd: FormGroup;
   private _loading: boolean = false;
+
+  constructor(private _auth: AuthService) {}
 
   ngOnInit(): void {
     this.fd = new FormGroup({
@@ -28,8 +31,10 @@ export class LoginComponent implements OnInit {
     if (this.fd.invalid) {
       return;
     }
+    const done = () => (this._loading = false);
     // set the loading
     this._loading = true;
+    this._auth.login(data, done); // data is fd.value()
 
     // fetch data using http service then turn loading false
 
@@ -42,5 +47,8 @@ export class LoginComponent implements OnInit {
 
   get password() {
     return this.fd.get('password');
+  }
+  get loading() {
+    return this._loading;
   }
 }
